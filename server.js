@@ -1,15 +1,18 @@
 const express = require('express');
-const app = express();
 const nodemailer = require('nodemailer');
-const path = require('path');
+const cors = require('cors');
 
+const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Middleware to parse JSON
 app.use(express.json());
 
 app.post('/api/send-email', (req, res) => {
-    console.log(req.body);
+    console.log('Received request to send email:', req.body);
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -28,7 +31,7 @@ app.post('/api/send-email', (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log(error);
+            console.error('Error sending email:', error);
             return res.status(500).json({ status: 'error', message: error.toString() });
         } else {
             console.log('Email sent: ' + info.response);
